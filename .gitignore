@@ -1,0 +1,14 @@
+SimpleServer/Debug/BuildLog.htm
+*.obj
+*.dep
+*.exe
+*.manifest
+*.res
+*.ilk
+*.pch
+*.pdb
+*.idb
+*.htm
+*.user
+*.ncb
+*.suo

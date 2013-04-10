@@ -6,6 +6,9 @@
 #include "SimpleServer.h"
 #include "SimpleServerDlg.h"
 
+#include "Server.h"
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -31,6 +34,8 @@ BEGIN_MESSAGE_MAP(CSimpleServerDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+//	ON_WM_CLOSE()
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -45,7 +50,10 @@ BOOL CSimpleServerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
+	// Init Server
+	Server::Create();
+	Server::Instance()->Init(54347);
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -86,3 +94,23 @@ HCURSOR CSimpleServerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+// THIS IS NOT CALLED
+//void CSimpleServerDlg::OnClose()
+//{
+//	// TODO: Add your message handler code here and/or call default
+//	Server::Instance()->Shutdown();
+//	Server::Destroy();
+//
+//
+//	CDialog::OnClose();
+//}
+
+void CSimpleServerDlg::OnDestroy()
+{
+	CDialog::OnDestroy();
+
+	// TODO: Add your message handler code here
+	Server::Instance()->Shutdown();
+	Server::Destroy();
+}

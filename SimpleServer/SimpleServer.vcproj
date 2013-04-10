@@ -45,6 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\..\utils;..\..\boost_1_53_0\boost_1_53_0\libs;&quot;..\..\rapidjson-0.11\rapidjson\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -125,6 +126,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\utils;..\..\boost_1_53_0\boost_1_53_0\libs;&quot;..\..\rapidjson-0.11\rapidjson\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -259,10 +261,38 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\ReadMe.txt"
+			RelativePath=".\ClientSocket.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\ClientSocket.h"
+			>
+		</File>
+		<File
+			RelativePath=".\ListenSocket.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\ListenSocket.h"
+			>
+		</File>
+		<File
+			RelativePath=".\Server.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Server.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\utils\TSingleton.h"
 			>
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="SimpleServer.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

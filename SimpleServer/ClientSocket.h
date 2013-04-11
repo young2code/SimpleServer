@@ -15,6 +15,8 @@ public:
 	void ResolvePeerAddress();
 	const char* GetPeerAddress() const { return mAddress.c_str(); }
 
+	void PostSend(const char* jsonStr, int total); // // total - size including null character.
+
 private:
 	void GenerateJSON();
 

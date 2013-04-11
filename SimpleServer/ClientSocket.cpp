@@ -42,8 +42,7 @@ void ClientSocket::OnReceive(int nErrorCode)
 		return;
 	}
 
-	char temp[kMaxDataSize] = {0,};
-
+	char temp[kMaxDataSize];
 	int result = Receive(temp, sizeof(temp));
 
 	if (result == 0)
@@ -83,23 +82,19 @@ void ClientSocket::OnSend(int nErrorCode)
 void ClientSocket::OnClose(int nErrorCode)
 {
 	TRACE("ClientSocket::OnClose - [%s]", mAddress.c_str());
+	Server::Instance()->OnClose(this);
 }
 
 
 void ClientSocket::GenerateJSON()
 {
-	if( rand() % 10 < 5 )
-	{
-		return;
-	}
-
 	RingBuffer::iterator itorEnd = std::find(mRecvBuffer.begin(), mRecvBuffer.end(), '\0');
 
 	while (itorEnd != mRecvBuffer.end())
 	{
 		++itorEnd;
 
-		char jsonStr[kMaxDataSize] = {0,};
+		char jsonStr[kMaxDataSize];
 		int i = 0;
 		for(RingBuffer::iterator itor = mRecvBuffer.begin() ; itor < itorEnd ; ++itor)
 		{
@@ -114,11 +109,11 @@ void ClientSocket::GenerateJSON()
 
 		if (jsonData.HasParseError())
 		{
-			TRACE("ClientSocket::GenerateJSON - parsing failed. str[%s] error[%s], %s", jsonStr, jsonData.GetParseError(), mAddress.c_str());
+			TRACE("ClientSocket::GenerateJSON - parsing failed. %s error[%s], %s", jsonStr, jsonData.GetParseError(), mAddress.c_str());
 		}
 		else
 		{
-			TRACE("ClientSocket::GenerateJSON - parsing succeeded. str[%s], %s", jsonStr, mAddress.c_str());
+			TRACE("ClientSocket::GenerateJSON - parsing succeeded. %s, %s", jsonStr, mAddress.c_str());
 
 			Server::Instance()->OnReceive(this, jsonData);
 		}

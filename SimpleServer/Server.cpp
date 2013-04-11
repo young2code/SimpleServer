@@ -34,7 +34,7 @@ bool Server::Init(UINT port)
 	UINT realPort = 0;
 	if (mListenSocket.GetSockName(address, realPort))
 	{
-		TRACE("Server::Init() - start listening.  %s:%d", address.GetBuffer(0), realPort);
+		TRACE("Server::Init() - start listening. %s:%d", address.GetBuffer(0), realPort);
 	}
 
 	return true;
@@ -74,9 +74,16 @@ void Server::OnAccept(int nErrorCode)
 }
 
 
+void Server::OnClose(ClientSocket* socket)
+{
+	mClientSockets.erase(std::remove(mClientSockets.begin(), mClientSockets.end(), socket));
+	delete socket;
+}
+
+
 void Server::OnReceive(ClientSocket* socket, const rapidjson::Document& jsonData)
 {
-
+	/* do whatever we want with jsonData. */
 }
 
 

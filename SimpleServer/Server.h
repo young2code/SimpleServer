@@ -20,6 +20,7 @@ public:
 	void Shutdown();
 
 	void OnAccept(int nErrorCode);
+	void OnClose(ClientSocket* socket);
 	void OnReceive(ClientSocket* socket, const rapidjson::Document& jsonData);
 
 private:

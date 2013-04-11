@@ -4,6 +4,9 @@
 #include "Server.h"
 
 #include <rapidjson/document.h>
+#include <boost/array.hpp>
+ 
+#pragma warning(disable:4996) //4996: 'std::copy': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
 
 namespace
 {
@@ -94,26 +97,23 @@ void ClientSocket::GenerateJSON()
 	{
 		++itorEnd;
 
-		char jsonStr[kMaxDataSize];
-		int i = 0;
-		for(RingBuffer::iterator itor = mRecvBuffer.begin() ; itor < itorEnd ; ++itor)
-		{
-			ASSERT(i < kMaxDataSize);
-			jsonStr[i++] = *itor;
-		}
+		boost::array<char, kMaxDataSize> jsonStr;
+
+		ASSERT(std::distance(mRecvBuffer.begin(), itorEnd) <= kMaxDataSize);
+		std::copy(mRecvBuffer.begin(), itorEnd, jsonStr.begin());
 
 		mRecvBuffer.erase(mRecvBuffer.begin(), itorEnd);
 
 		rapidjson::Document jsonData;
-		jsonData.Parse<0>(jsonStr);
+		jsonData.Parse<0>(jsonStr.data());
 
 		if (jsonData.HasParseError())
 		{
-			TRACE("ClientSocket::GenerateJSON - parsing failed. %s error[%s], %s", jsonStr, jsonData.GetParseError(), mAddress.c_str());
+			TRACE("ClientSocket::GenerateJSON - parsing failed. %s error[%s], %s", jsonStr.data(), jsonData.GetParseError(), mAddress.c_str());
 		}
 		else
 		{
-			TRACE("ClientSocket::GenerateJSON - parsing succeeded. %s, %s", jsonStr, mAddress.c_str());
+			TRACE("ClientSocket::GenerateJSON - parsing succeeded. %s, %s", jsonStr.data(), mAddress.c_str());
 
 			Server::Instance()->OnReceive(this, jsonData);
 		}

@@ -22,7 +22,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			CharacterSet="1"
+			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\utils;..\..\boost_1_53_0\boost_1_53_0\libs;&quot;..\..\rapidjson-0.11\rapidjson\include&quot;"
+				AdditionalIncludeDirectories="..\..\utils;..\..\boost_1_53_0\boost_1_53_0\;&quot;..\..\rapidjson-0.11\rapidjson\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -101,7 +101,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			CharacterSet="1"
+			CharacterSet="0"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -126,7 +126,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\utils;..\..\boost_1_53_0\boost_1_53_0\libs;&quot;..\..\rapidjson-0.11\rapidjson\include&quot;"
+				AdditionalIncludeDirectories="..\..\utils;..\..\boost_1_53_0\boost_1_53_0;&quot;..\..\rapidjson-0.11\rapidjson\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"

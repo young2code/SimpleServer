@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Server.h"
+#include <rapidjson/document.h>
 
 Server::Server()
 {
@@ -33,7 +34,7 @@ bool Server::Init(UINT port)
 	UINT realPort = 0;
 	if (mListenSocket.GetSockName(address, realPort))
 	{
-		TRACE("Server::Init() - start listening.  %S:%d", address.GetBuffer(0), realPort);
+		TRACE("Server::Init() - start listening.  %s:%d", address.GetBuffer(0), realPort);
 	}
 
 	return true;
@@ -55,9 +56,27 @@ void Server::OnAccept(int nErrorCode)
 {
 	if (0 == nErrorCode)
 	{
-		ClientSocket* pSocket = new ClientSocket;
-		mClientSockets.push_back(pSocket);
+		ClientSocket* socket = new ClientSocket;
 
-		mListenSocket.Accept(*pSocket);
+		if (mListenSocket.Accept(*socket))
+		{
+			mClientSockets.push_back(socket);
+			socket->ResolvePeerAddress();
+
+			TRACE("Server::OnAccept() - accepted. %s", socket->GetPeerAddress());
+		}
+		else
+		{
+			delete socket;
+			TRACE("Server::OnAccept() - failed to accept. error[%d]", GetLastError());
+		}
 	}
 }
+
+
+void Server::OnReceive(ClientSocket* socket, const rapidjson::Document& jsonData)
+{
+
+}
+
+

@@ -7,6 +7,8 @@
 #include "ListenSocket.h"
 #include "ClientSocket.h"
 
+#include <rapidjson/document.h>
+
 class Server : public TSingleton<Server>
 {
 public:
@@ -18,6 +20,7 @@ public:
 	void Shutdown();
 
 	void OnAccept(int nErrorCode);
+	void OnReceive(ClientSocket* socket, const rapidjson::Document& jsonData);
 
 private:
 	ListenSocket mListenSocket;

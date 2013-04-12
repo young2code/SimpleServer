@@ -7,7 +7,7 @@
 #include "SimpleServerDlg.h"
 
 #include "Server.h"
-
+#include "LogMan.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,6 +28,7 @@ CSimpleServerDlg::CSimpleServerDlg(CWnd* pParent /*=NULL*/)
 void CSimpleServerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT1, mLogOutput);
 }
 
 BEGIN_MESSAGE_MAP(CSimpleServerDlg, CDialog)

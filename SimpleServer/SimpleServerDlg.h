@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "afxwin.h"
 
 
 // CSimpleServerDlg dialog
@@ -31,4 +32,6 @@ protected:
 public:
 //	afx_msg void OnClose();
 	afx_msg void OnDestroy();
+private:
+	CEdit mLogOutput;
 };

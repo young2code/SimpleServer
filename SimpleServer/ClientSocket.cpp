@@ -2,6 +2,7 @@
 
 #include "ClientSocket.h"
 #include "Server.h"
+#include "LogMan.h"
 
 #include <rapidjson/document.h>
 #include <boost/array.hpp>
@@ -42,7 +43,7 @@ void ClientSocket::OnReceive(int nErrorCode)
 {
 	if (0 != nErrorCode)
 	{
-		TRACE("ClientSocket::OnReceive - error[%d]. [%s]", nErrorCode, mAddress.c_str());
+		LOG("ClientSocket::OnReceive - error[%d]. [%s]", nErrorCode, mAddress.c_str());
 
 		Close();
 		return;
@@ -53,7 +54,7 @@ void ClientSocket::OnReceive(int nErrorCode)
 
 	if (0 == result)
 	{
-		TRACE("ClientSocket::OnReceive - closed. [%s]", mAddress.c_str());
+		LOG("ClientSocket::OnReceive - closed. [%s]", mAddress.c_str());
 		Close();
 		return;
 	}
@@ -62,7 +63,7 @@ void ClientSocket::OnReceive(int nErrorCode)
 	{
 		if (WSAEWOULDBLOCK != GetLastError())
 		{
-			TRACE("ClientSocket::OnReceive - receive error[%d]. [%s]", GetLastError(), mAddress.c_str());
+			LOG("ClientSocket::OnReceive - receive error[%d]. [%s]", GetLastError(), mAddress.c_str());
 			Close();
 		}
 		return;
@@ -77,7 +78,7 @@ void ClientSocket::OnReceive(int nErrorCode)
 
 	mRecvBuffer.insert(mRecvBuffer.end(), temp, temp + result);
 
-	TRACE("ClientSocket::OnReceive - received [%d]. [%s]", result, mAddress.c_str());
+	LOG("ClientSocket::OnReceive - received [%d]. [%s]", result, mAddress.c_str());
 
 	GenerateJSON();
 }
@@ -87,7 +88,7 @@ void ClientSocket::OnSend(int nErrorCode)
 {
 	if (0 != nErrorCode)
 	{
-		TRACE("ClientSocket::OnSend - error[%d]. [%s]", nErrorCode, mAddress.c_str());
+		LOG("ClientSocket::OnSend - error[%d]. [%s]", nErrorCode, mAddress.c_str());
 
 		Close();
 		return;
@@ -99,7 +100,7 @@ void ClientSocket::OnSend(int nErrorCode)
 
 void ClientSocket::OnClose(int nErrorCode)
 {
-	TRACE("ClientSocket::OnClose - [%s]", mAddress.c_str());
+	LOG("ClientSocket::OnClose - [%s]", mAddress.c_str());
 	Server::Instance()->OnClose(this);
 }
 
@@ -139,11 +140,11 @@ void ClientSocket::GenerateJSON()
 
 		if (jsonData.HasParseError())
 		{
-			TRACE("ClientSocket::GenerateJSON - parsing failed. %s error[%s], %s", jsonStr.data(), jsonData.GetParseError(), mAddress.c_str());
+			LOG("ClientSocket::GenerateJSON - parsing failed. %s error[%s], %s", jsonStr.data(), jsonData.GetParseError(), mAddress.c_str());
 		}
 		else
 		{
-			TRACE("ClientSocket::GenerateJSON - parsing succeeded. %s, %s", jsonStr.data(), mAddress.c_str());
+			LOG("ClientSocket::GenerateJSON - parsing succeeded. %s, %s", jsonStr.data(), mAddress.c_str());
 
 			Server::Instance()->OnReceive(this, jsonData);
 		}
@@ -172,7 +173,7 @@ void ClientSocket::TrySend()
 		{
 			if (WSAEWOULDBLOCK != GetLastError())
 			{
-				TRACE("ClientSocket::OnSend - send error[%d]. [%s]", GetLastError(), mAddress.c_str());
+				LOG("ClientSocket::OnSend - send error[%d]. [%s]", GetLastError(), mAddress.c_str());
 				Close();				
 			}
 			return;
@@ -180,7 +181,7 @@ void ClientSocket::TrySend()
 		
 		ASSERT(result > 0);
 
-		TRACE("ClientSocket::OnSend - sending succeeded. %d / %d . %s", result, total, mAddress.c_str());
+		LOG("ClientSocket::OnSend - sending succeeded. %d / %d . %s", result, total, mAddress.c_str());
 
 		itorEnd = mSendBuffer.begin();
 		std::advance(itorEnd, result);

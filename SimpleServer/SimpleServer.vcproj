@@ -277,6 +277,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\LogMan.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\LogMan.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Server.cpp"
 			>
 		</File>

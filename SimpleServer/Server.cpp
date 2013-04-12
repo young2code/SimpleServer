@@ -2,6 +2,7 @@
 
 #include "Server.h"
 #include "ClientSocket.h"
+#include "LogMan.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
@@ -21,7 +22,7 @@ bool Server::Init(UINT port)
 {
 	if (!mListenSocket.Create(port))
 	{
-		TRACE("Server::Init() - faied to create a listener socket.");
+		LOG("Server::Init() - faied to create a listener socket.");
 		return false;
 	}
 
@@ -30,7 +31,7 @@ bool Server::Init(UINT port)
 
 	if (!mListenSocket.Listen())
 	{
-		TRACE("Server::Init() - faied to start listening.");
+		LOG("Server::Init() - faied to start listening.");
 		return false;
 	}
 
@@ -38,7 +39,7 @@ bool Server::Init(UINT port)
 	UINT realPort = 0;
 	if (mListenSocket.GetSockName(address, realPort))
 	{
-		TRACE("Server::Init() - start listening. %s:%d", address.GetBuffer(0), realPort);
+		LOG("Server::Init() - start listening. %s:%d", address.GetBuffer(0), realPort);
 	}
 
 	return true;
@@ -67,12 +68,12 @@ void Server::OnAccept(int nErrorCode)
 			mClientSockets.push_back(socket);
 			socket->ResolvePeerAddress();
 
-			TRACE("Server::OnAccept() - accepted. %s", socket->GetPeerAddress());
+			LOG("Server::OnAccept() - accepted. %s", socket->GetPeerAddress());
 		}
 		else
 		{
 			delete socket;
-			TRACE("Server::OnAccept() - failed to accept. error[%d]", GetLastError());
+			LOG("Server::OnAccept() - failed to accept. error[%d]", GetLastError());
 		}
 	}
 }

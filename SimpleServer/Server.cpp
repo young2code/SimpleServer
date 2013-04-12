@@ -1,7 +1,11 @@
 #include "stdafx.h"
 
 #include "Server.h"
+#include "ClientSocket.h"
+
 #include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
 Server::Server()
 {
@@ -76,6 +80,8 @@ void Server::OnAccept(int nErrorCode)
 
 void Server::OnClose(ClientSocket* socket)
 {
+	ASSERT(socket);
+
 	mClientSockets.erase(std::remove(mClientSockets.begin(), mClientSockets.end(), socket));
 	delete socket;
 }
@@ -83,7 +89,14 @@ void Server::OnClose(ClientSocket* socket)
 
 void Server::OnReceive(ClientSocket* socket, const rapidjson::Document& jsonData)
 {
-	/* do whatever we want with jsonData. */
+	ASSERT(socket);
+
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	jsonData.Accept(writer);
+
+	// echo json string including null
+	socket->PostSend(buffer.GetString(), buffer.Size()+1);
 }
 
 

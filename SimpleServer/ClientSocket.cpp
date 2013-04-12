@@ -93,38 +93,7 @@ void ClientSocket::OnSend(int nErrorCode)
 		return;
 	}
 
-	while (!mSendBuffer.empty())
-	{
-		boost::array<char, kMaxDataSize> jsonStr;
-
-		RingBuffer::iterator itorEnd = mSendBuffer.begin();
-		size_t total = std::min<size_t>(mSendBuffer.size(), kMaxDataSize);
-		std::advance(itorEnd, total);
-
-		ASSERT(std::distance(mRecvBuffer.begin(), itorEnd) <= kMaxDataSize);
-		std::copy(mSendBuffer.begin(), itorEnd, jsonStr.begin());
-
-		int result = Send(jsonStr.data(), total);
-
-		if (SOCKET_ERROR == result)
-		{
-			if (WSAEWOULDBLOCK != GetLastError())
-			{
-				TRACE("ClientSocket::OnSend - send error[%d]. [%s]", GetLastError(), mAddress.c_str());
-				Close();
-			}
-
-			return;
-		}
-		
-		ASSERT(result > 0);
-
-		TRACE("ClientSocket::OnSend - sending succeeded. %d bytes. %s", result, mAddress.c_str());
-
-		itorEnd = mSendBuffer.begin();
-		std::advance(itorEnd, result);
-		mSendBuffer.erase(mSendBuffer.begin(), itorEnd);
-	}
+	TrySend();
 }
 
 
@@ -137,29 +106,16 @@ void ClientSocket::OnClose(int nErrorCode)
 
 void ClientSocket::PostSend(const char* jsonStr, int total)
 {
-	int result = 0;
-
-	if (mSendBuffer.empty())
+	int available = mSendBuffer.capacity() - mSendBuffer.size();
+	if (available < total)
 	{
-		result = Send(jsonStr, total);
-
-		if (SOCKET_ERROR == result)
-		{
-			if (WSAEWOULDBLOCK != GetLastError())
-			{
-				TRACE("ClientSocket::PostSend - send error[%d]. [%s]", GetLastError(), mAddress.c_str());
-				Close();
-				return;
-			}
-
-			result = 0;
-		}
+		mSendBuffer.set_capacity(mSendBuffer.capacity() + total*2);
 	}
+	ASSERT(mSendBuffer.capacity() - mSendBuffer.size() >= static_cast<size_t>(total));
 
-	if (result >= 0 && result < total)
-	{
-		mSendBuffer.insert(mSendBuffer.end(), jsonStr + result, jsonStr + total); 
-	}
+	mSendBuffer.insert(mSendBuffer.end(), jsonStr, jsonStr + total); 
+
+	TrySend();
 }
 
 
@@ -193,5 +149,41 @@ void ClientSocket::GenerateJSON()
 		}
 
 		itorEnd = std::find(mRecvBuffer.begin(), mRecvBuffer.end(), '\0');
+	}
+}
+
+
+void ClientSocket::TrySend()
+{
+	while (!mSendBuffer.empty())
+	{
+		boost::array<char, kMaxDataSize> temp;
+
+		RingBuffer::iterator itorEnd = mSendBuffer.begin();
+		size_t total = std::min<size_t>(mSendBuffer.size(), kMaxDataSize);
+		std::advance(itorEnd, total);
+
+		ASSERT(std::distance(mSendBuffer.begin(), itorEnd) <= kMaxDataSize);
+		std::copy(mSendBuffer.begin(), itorEnd, temp.begin());
+
+		int result = Send(temp.data(), total);
+
+		if (SOCKET_ERROR == result)
+		{
+			if (WSAEWOULDBLOCK != GetLastError())
+			{
+				TRACE("ClientSocket::OnSend - send error[%d]. [%s]", GetLastError(), mAddress.c_str());
+				Close();				
+			}
+			return;
+		}
+		
+		ASSERT(result > 0);
+
+		TRACE("ClientSocket::OnSend - sending succeeded. %d / %d . %s", result, total, mAddress.c_str());
+
+		itorEnd = mSendBuffer.begin();
+		std::advance(itorEnd, result);
+		mSendBuffer.erase(mSendBuffer.begin(), itorEnd);
 	}
 }

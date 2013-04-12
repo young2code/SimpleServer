@@ -5,9 +5,10 @@
 
 #include "TSingleton.h"
 #include "ListenSocket.h"
-#include "ClientSocket.h"
 
 #include <rapidjson/document.h>
+
+class ClientSocket;
 
 class Server : public TSingleton<Server>
 {

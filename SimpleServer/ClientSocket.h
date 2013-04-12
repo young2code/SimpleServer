@@ -19,6 +19,7 @@ public:
 
 private:
 	void GenerateJSON();
+	void TrySend();
 
 private:
 	typedef boost::circular_buffer<char> RingBuffer;
